@@ -8,7 +8,7 @@
     width: 4rem;
     height: 4rem;
     cursor: pointer;
-    border: none;
+    border: thin solid black;
     border-radius: 50%;
     padding: 0;
     z-index: 999;
@@ -19,4 +19,8 @@
     font-weight: bold;
     width: 6.4rem;
     height: 6.4rem;
+}
+
+.CreateTodoButton:hover{
+    transform: rotate(224deg);
 }

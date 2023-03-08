@@ -1,0 +1,25 @@
+.TodoSearch{
+    background: #F9FBFC;
+    border-radius: 0.2rem;
+    border: .2rem solid #202329;
+    margin: 0 2.4rem;
+    height: 6.4rem;
+    width: calc(100% - 6.2rem);
+    font-size: 2.4rem;
+    text-align: center;
+    font-family: 'raleway', 'sans-serif';
+    font-weight: 400;
+    color: #1E1E1F;
+    box-shadow: 0rem .5rem 5rem rgba(32, 35, 41, 0.25);
+
+}
+
+.TodoSearch::placeholder{
+    color: #a5a5a6;
+    font-family: 'raleway', 'sans-serif';
+    font-weight: 400;
+}
+
+.TodoSearch:focus{
+    outline-color: #61DAFA;
+}
