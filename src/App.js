@@ -10,16 +10,22 @@ import { CreateTodoButton } from "./CreateTodoButton.js";
 
 const todos = [
   {
-    text: "Cortar cebolla",
+    text: "Pagar el internet",
     completed: false,
   },
   {
-    text: "Banana",
+    text: "Cambiar dólares",
+    completed: false,
+  },
+  {
+    text: "Reparar el celular",
     completed: true,
   },
 ];
 
 function App(props) {
+  // El componente App maneja el estado, el cual lo pasa a todos los componentes hijos
+
   return (
     <React.Fragment>
       <TodoCounter />

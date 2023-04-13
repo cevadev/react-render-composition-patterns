@@ -3,20 +3,27 @@ import React from "react";
 import "./TodoSearch.css";
 
 function TodoSearch() {
-  // escuchamos los cambios hechos en el input search
+  // almacenamos el state en searchValue
+  // setSearchValue es una funcion que actualiza el state de la app
+  const [searchValue, setSearchValue] = React.useState("");
+
+  // escuchamos los cambios hechos en el input search para llamar a la funcion setSearchValue y asi
+  // actualizar el state searchValue
   const onHandleChange = (event) => {
-    // print input text value
-    console.info(event.target.value);
+    setSearchValue(event.target.value);
   };
 
-  return (
+  return [
+    /** input.value esta conectado con el state */
     <input
       className="TodoSearch"
       type="text"
-      placeholder="Cebolla"
+      placeholder="Ingrese una nueva tarea"
+      value={searchValue}
       onChange={onHandleChange}
-    />
-  );
+    />,
+    <p>{searchValue}</p>,
+  ];
 }
 
 export { TodoSearch };
