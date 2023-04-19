@@ -8,7 +8,7 @@ import { CreateTodoButton } from "./CreateTodoButton.js";
 
 // import "./App.css";
 
-const todos = [
+const defaultTodos = [
   {
     text: "Pagar el internet",
     completed: false,
@@ -19,19 +19,43 @@ const todos = [
   },
   {
     text: "Reparar el celular",
-    completed: true,
+    completed: false,
   },
 ];
 
 function App(props) {
   // El componente App maneja el estado, el cual lo pasa a todos los componentes hijos
+  // almacenamos el state en searchValue
+  // setSearchValue es una funcion que actualiza el state de la app
+  const [searchValue, setSearchValue] = React.useState("");
+
+  // manejamos el estado de los to-do
+  const [todos, setTodos] = React.useState(defaultTodos);
+
+  // filtramos los todos cuya propiedad completed es true (!!) y los contamos (lenght)
+  const completedTodos = todos.filter((todo) => {
+    return !!todo.completed;
+  }).length;
+
+  const totalTodos = todos.length;
+
+  let searchedTodos = [];
+  if (!(searchValue.length >= 1)) {
+    searchedTodos = todos;
+  } else {
+    searchedTodos = todos.filter((todo) => {
+      const todoText = todo.text.toLowerCase();
+      const searchText = searchValue.toLowerCase();
+      return todoText.includes(searchText);
+    });
+  }
 
   return (
     <React.Fragment>
-      <TodoCounter />
-      <TodoSearch />
+      <TodoCounter total={totalTodos} completed={completedTodos} />
+      <TodoSearch searchValue={searchValue} setSearchValue={setSearchValue} />
       <TodoList>
-        {todos.map((todo) => (
+        {searchedTodos.map((todo) => (
           <TodoItem
             key={todo.text}
             text={todo.text}
