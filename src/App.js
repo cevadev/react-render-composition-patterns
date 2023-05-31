@@ -8,6 +8,15 @@ import { CreateTodoButton } from "./CreateTodoButton.js";
 
 // import "./App.css";
 
+/**
+ * 1. Tenemos un array de todos (defaultTodos)
+ * 2. Contamos los todos marcados como completados (completedTodos)
+ * 3. Contamos la cantidad de todos creados (totalTodos)
+ * 4. Filtramos los todos dependiendo lo que escriban y lo colocamos en el array searchedTodos
+ * 5. La funcion completeTodo cada vez que reciba un text va a buscar en la lista de todos cual
+ *    de los todos coincide con el texto
+ */
+
 const defaultTodos = [
   {
     text: "Pagar el internet",
@@ -19,7 +28,7 @@ const defaultTodos = [
   },
   {
     text: "Reparar el celular",
-    completed: false,
+    completed: true,
   },
 ];
 
@@ -50,6 +59,28 @@ function App(props) {
     });
   }
 
+  // funcion que completa un todo
+  const completeTodo = (text) => {
+    // encontramos la posicion de todo dentro de todos y que coincida con el input text
+    const todoIndex = todos.findIndex((todo) => todo.text === text);
+    // clonamos la lista de todos
+    const newTodos = [...todos];
+    // basados en el todoIndex nos ubicamos en dicho todo y modificamos la propiedad completed a true
+    newTodos[todoIndex] = {
+      text: todos[todoIndex].text,
+      completed: true,
+    };
+    // enviamos la nueva lista de todos para actualizar el estado, y se vuelve a renderizar al app
+    setTodos(newTodos);
+  };
+
+  const deleteTodo = (text) => {
+    const todoIndex = todos.findIndex((todo) => todo.text === text);
+    const newTodos = [...todos];
+    newTodos.splice(todoIndex, 1);
+    setTodos(newTodos);
+  };
+
   return (
     <React.Fragment>
       <TodoCounter total={totalTodos} completed={completedTodos} />
@@ -60,6 +91,8 @@ function App(props) {
             key={todo.text}
             text={todo.text}
             completed={todo.completed}
+            onComplete={() => completeTodo(todo.text)}
+            onDelete={() => deleteTodo(todo.text)}
           />
         ))}
       </TodoList>
