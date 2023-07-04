@@ -2,7 +2,40 @@ import React from "react";
 
 import { AppUI } from "./AppUI";
 
-// import "./App.css";
+/**
+ * useLocalStora es un custom react hook donde abstraemos la logica del LocalStorage
+ * La funcion useLocalStorage no solo retorna los todos items del localStorage sino tambien
+ * el item o elemento que guardamos en el LocalStorage
+ * param  itemName-> nombre del elemento o key con el que vamos a trabajar
+ * param initialValue -> valor inicial item en el local storage
+ */
+function useLocalStorage(itemName, initialValue) {
+  // llamamos al LocalStorage de acuerdo al itemName para obtener sus elementos
+  const localStorageItem = localStorage.getItem(itemName);
+  let parsedItem;
+  // validamos si no hay items
+  if (!localStorageItem) {
+    // si no hay, el estado inicial es un array vacio
+    localStorage.setItem(itemName, JSON.stringify(initialValue));
+    parsedItem = [];
+  } else {
+    parsedItem = JSON.parse(localStorageItem);
+  }
+
+  // dentro del custom hook, llamamos a React.useState()
+  const [item, setItem] = React.useState(parsedItem);
+
+  // guardamos las actualizaciones que se nos envien en localstorage, como el state en React
+  const saveItem = (newTodos) => {
+    // persistimos la info en el localStorage
+    const stringifiedTodos = JSON.stringify(newTodos);
+    localStorage.setItem(itemName, stringifiedTodos);
+    // actualizamos el state de la app
+    setItem(newTodos);
+  };
+
+  return [item, saveItem];
+}
 
 /**
  * 1. Tenemos un array de todos (defaultTodos)
@@ -12,30 +45,15 @@ import { AppUI } from "./AppUI";
  * 5. La funcion completeTodo cada vez que reciba un text va a buscar en la lista de todos cual
  *    de los todos coincide con el texto
  */
-
-const defaultTodos = [
-  {
-    text: "Pagar el internet",
-    completed: false,
-  },
-  {
-    text: "Cambiar dólares",
-    completed: false,
-  },
-  {
-    text: "Reparar el celular",
-    completed: false,
-  },
-];
-
 function App(props) {
+  // llamamos a nuestro custom hook,para que los componentes se vuelvan a renderizar
+  // pasamos el nombre del item en el localstorage y el valor inicial del todo app
+  const [todos, saveItem] = useLocalStorage("TODOS_V1", []);
+
   // El componente App maneja el estado, el cual lo pasa a todos los componentes hijos
   // almacenamos el state en searchValue
   // setSearchValue es una funcion que actualiza el state de la app
   const [searchValue, setSearchValue] = React.useState("");
-
-  // manejamos el estado de los to-do
-  const [todos, setTodos] = React.useState(defaultTodos);
 
   // filtramos los todos cuya propiedad completed es true (!!) y los contamos (lenght)
   const completedTodos = todos.filter((todo) => {
@@ -67,14 +85,14 @@ function App(props) {
       completed: true,
     };
     // enviamos la nueva lista de todos para actualizar el estado, y se vuelve a renderizar al app
-    setTodos(newTodos);
+    saveItem(newTodos);
   };
 
   const deleteTodo = (text) => {
     const todoIndex = todos.findIndex((todo) => todo.text === text);
     const newTodos = [...todos];
     newTodos.splice(todoIndex, 1);
-    setTodos(newTodos);
+    saveItem(newTodos);
   };
 
   return (
