@@ -10,31 +10,56 @@ import { AppUI } from "./AppUI";
  * param initialValue -> valor inicial item en el local storage
  */
 function useLocalStorage(itemName, initialValue) {
-  // llamamos al LocalStorage de acuerdo al itemName para obtener sus elementos
-  const localStorageItem = localStorage.getItem(itemName);
-  let parsedItem;
-  // validamos si no hay items
-  if (!localStorageItem) {
-    // si no hay, el estado inicial es un array vacio
-    localStorage.setItem(itemName, JSON.stringify(initialValue));
-    parsedItem = [];
-  } else {
-    parsedItem = JSON.parse(localStorageItem);
-  }
+  // creamos loading y error state
+  const [loading, setLoading] = React.useState(true);
+  const [error, setError] = React.useState(false);
+  // dentro del custom hook, llamamos a React.useState() y el state inicial sera vacio
+  const [item, setItem] = React.useState(initialValue);
 
-  // dentro del custom hook, llamamos a React.useState()
-  const [item, setItem] = React.useState(parsedItem);
+  // no brindamos la informacion directamente del localstorage sino que simulamos que se
+  // tarda un poco de tiempo, dicho codigo lo envolvemos dentro del hook useEffect
+  // despues de 2 segundo, se recupera la informacion en el localstorage
+  React.useEffect(() => {
+    setTimeout(() => {
+      try {
+        // llamamos al LocalStorage de acuerdo al itemName para obtener sus elementos
+        const localStorageItem = localStorage.getItem(itemName);
+        let parsedItem;
+        // validamos si no hay items
+        if (!localStorageItem) {
+          // si no hay, el estado inicial es un array vacio
+          localStorage.setItem(itemName, JSON.stringify(initialValue));
+          parsedItem = [];
+        } else {
+          parsedItem = JSON.parse(localStorageItem);
+        }
+        // actualizamos el estado con la informacion del localstorage
+        setItem(parsedItem);
+
+        // cuando ya tenemos informacion en el state item, actualizamos el state loading a false
+        setLoading(false);
+      } catch (error) {
+        setError(error);
+      }
+    }, 2000);
+  });
 
   // guardamos las actualizaciones que se nos envien en localstorage, como el state en React
   const saveItem = (newTodos) => {
-    // persistimos la info en el localStorage
-    const stringifiedTodos = JSON.stringify(newTodos);
-    localStorage.setItem(itemName, stringifiedTodos);
-    // actualizamos el state de la app
-    setItem(newTodos);
+    try {
+      // persistimos la info en el localStorage
+      const stringifiedTodos = JSON.stringify(newTodos);
+      localStorage.setItem(itemName, stringifiedTodos);
+      // actualizamos el state de la app
+      setItem(newTodos);
+    } catch (error) {
+      setError(error);
+    }
   };
 
-  return [item, saveItem];
+  // enviamos los states a los componentes que se suscriben al custom hook useLocalStorage
+  // cuando el custom hook retornar mas de 2 elementos se recomienda que retorne un objeto y no un array
+  return { item, saveItem, loading, error };
 }
 
 /**
@@ -48,7 +73,13 @@ function useLocalStorage(itemName, initialValue) {
 function App(props) {
   // llamamos a nuestro custom hook,para que los componentes se vuelvan a renderizar
   // pasamos el nombre del item en el localstorage y el valor inicial del todo app
-  const [todos, saveItem] = useLocalStorage("TODOS_V1", []);
+  // recibimos los states del custom hook
+  const {
+    item: todos,
+    saveItem: saveTodos,
+    loading,
+    error,
+  } = useLocalStorage("TODOS_V1", []);
 
   // El componente App maneja el estado, el cual lo pasa a todos los componentes hijos
   // almacenamos el state en searchValue
@@ -85,18 +116,47 @@ function App(props) {
       completed: true,
     };
     // enviamos la nueva lista de todos para actualizar el estado, y se vuelve a renderizar al app
-    saveItem(newTodos);
+    saveTodos(newTodos);
   };
 
   const deleteTodo = (text) => {
     const todoIndex = todos.findIndex((todo) => todo.text === text);
     const newTodos = [...todos];
     newTodos.splice(todoIndex, 1);
-    saveItem(newTodos);
+    saveTodos(newTodos);
   };
+
+  /**
+   * Los efectos en react son un hook en react que nos permiten cierta parte del codigo de un componente
+   * no se ejecute cada vez que hace render la app sino dependiendo de ciertas condiciones.
+   * Nuestra app va a simular un llamado a una api para traer los to-do's por lo que necesitamos
+   * tres estados de carga:
+   * 1.Estamos cargando la info
+   * 2.Hubo un error miestras cargamos la info
+   * 3.La operacion de carga se hizo exitosamente
+   *
+   * React.useEffect -> este hook ejecuta la funcion que se le pase no exactamente despues de renderizar
+   * el componente sino justo antes cuando react ya tiene todo preparado internamente para renderizar
+   *
+   */
+  //  console.info("Render antes de llamar a React.useEffect");
+  //  React.useEffect(() => {
+  //    console.info("Llamando a React.useEffect");
+  // dentro del array podemos indicar cuando se debe esjecutar el useEffect
+  // cuando colocamos un array vacio [] aunque el useEffect este en el codigo este se ejecuta
+  // una sola vez. La primera vez que se renderiza el componente sin importar cuantas
+  // veces vuelva a renderizarse el componente
+
+  // tambien podemos querer que el useEffect solo se ejecute cuando se produce un cambio en
+  // en el estado del componente. Por ejemplo vamos a escuchar los cambios en la variable
+  // totalTodos y cuando se produzca un cambio, se ejecutara el useEffect
+  //  }, [totalTodos]);
+  //  console.info("Luego de llamar a React.useEffect");
 
   return (
     <AppUI
+      loading={loading}
+      error={error}
       totalTodos={totalTodos}
       completedTodos={completedTodos}
       searchValue={searchValue}
