@@ -6,42 +6,54 @@ import { TodoList } from "../TodoList/index.js";
 import { TodoItem } from "../TodoItem/index.js";
 import { TodoContext } from "../TodoContext/index.js";
 import { CreateTodoButton } from "../CreateTodoButton/index.js";
+import { Modal } from "../Modal/index.js";
 
+import "./App.css";
 // recibimos las props
 function AppUI() {
+  // usando React.useContext que le pasamos el contexto de la app y obtenemos
+  // las propiedades que guardamos en el provider
+  const {
+    error,
+    loading,
+    searchedTodos,
+    completedTodo,
+    deleteTodo,
+    openModal,
+    setOpenModal,
+  } = React.useContext(TodoContext);
   return (
     <React.Fragment>
       <TodoCounter />
       <TodoSearch />
-      {/** */}
-      <TodoContext.Consumer>
-        {/** enviamos las render props. recibimos el value expuesto en el context.provider */}
-        {(value) => {
-          return (
-            <TodoList>
-              {value.error && (
-                <p>se ha producido un error inesperado en la carga de to-dos</p>
-              )}
-              {value.loading && (
-                <p>Estamos cargando la informacion de to-dos</p>
-              )}
-              {!value.loading && !value.searchedTodos.lenght && (
-                <p>puede crear tu primer to-do</p>
-              )}
-              {value.searchedTodos.map((todo) => (
-                <TodoItem
-                  key={todo.text}
-                  text={todo.text}
-                  completed={todo.completed}
-                  onComplete={() => value.completeTodo(todo.text)}
-                  onDelete={() => value.deleteTodo(todo.text)}
-                />
-              ))}
-            </TodoList>
-          );
-        }}
-      </TodoContext.Consumer>
-      <CreateTodoButton />
+      {/** enviamos las render props. recibimos el value que es una funcion expuesto en el context.provider */}
+      <TodoList>
+        {error && (
+          <p>se ha producido un error inesperado en la carga de to-dos</p>
+        )}
+        {loading && (
+          <p className="TodoMsg">Estamos cargando la informacion de to-dos</p>
+        )}
+        {!loading && !searchedTodos.lenght && (
+          <p className="TodoMsg">puedes crear tu primer to-do</p>
+        )}
+        {searchedTodos.map((todo) => (
+          <TodoItem
+            key={todo.text}
+            text={todo.text}
+            completed={todo.completed}
+            onComplete={() => completedTodo(todo.text)}
+            onDelete={() => deleteTodo(todo.text)}
+          />
+        ))}
+      </TodoList>
+      {/**doble negacion: que no exista, que no sea true (doblemente false es igual a true)*/}
+      {!!openModal && (
+        <Modal>
+          <p>{searchedTodos[0]?.text}</p>
+        </Modal>
+      )}
+      <CreateTodoButton setOpenModal={setOpenModal} />
     </React.Fragment>
   );
 }

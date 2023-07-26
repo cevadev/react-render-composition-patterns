@@ -46,6 +46,9 @@ function TodoProvider(props) {
   // setSearchValue es una funcion que actualiza el state de la app
   const [searchValue, setSearchValue] = React.useState("");
 
+  // estamos para el Modal
+  const [openModal, setOpenModal] = React.useState(false);
+
   // filtramos los todos cuya propiedad completed es true (!!) y los contamos (lenght)
   const completedTodos = todos.filter((todo) => {
     return !!todo.completed;
@@ -125,6 +128,8 @@ function TodoProvider(props) {
         searchedTodos,
         completeTodo,
         deleteTodo,
+        openModal,
+        setOpenModal,
       }}
     >
       {props.children}
