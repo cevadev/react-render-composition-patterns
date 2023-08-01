@@ -82,6 +82,20 @@ function TodoProvider(props) {
     saveTodos(newTodos);
   };
 
+  // funcion que agrega un todo
+  const addTodo = (text) => {
+    // clonamos la lista de todos
+    const newTodos = [...todos];
+    // creamos un nuevo objeto TODO y lo agregamos a nuestro array de TODO's
+    newTodos.push({
+      text,
+      completed: false,
+    });
+
+    // enviamos la nueva lista de todos para actualizar el estado, y se vuelve a renderizar al app
+    saveTodos(newTodos);
+  };
+
   const deleteTodo = (text) => {
     const todoIndex = todos.findIndex((todo) => todo.text === text);
     const newTodos = [...todos];
@@ -126,6 +140,7 @@ function TodoProvider(props) {
         searchValue,
         setSearchValue,
         searchedTodos,
+        addTodo,
         completeTodo,
         deleteTodo,
         openModal,

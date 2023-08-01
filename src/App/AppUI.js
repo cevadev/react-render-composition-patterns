@@ -7,8 +7,10 @@ import { TodoItem } from "../TodoItem/index.js";
 import { TodoContext } from "../TodoContext/index.js";
 import { CreateTodoButton } from "../CreateTodoButton/index.js";
 import { Modal } from "../Modal/index.js";
+import { TodoForm } from "../TodoForm/index.js";
 
 import "./App.css";
+
 // recibimos las props
 function AppUI() {
   // usando React.useContext que le pasamos el contexto de la app y obtenemos
@@ -50,7 +52,7 @@ function AppUI() {
       {/**doble negacion: que no exista, que no sea true (doblemente false es igual a true)*/}
       {!!openModal && (
         <Modal>
-          <p>{searchedTodos[0]?.text}</p>
+          <TodoForm></TodoForm>
         </Modal>
       )}
       <CreateTodoButton setOpenModal={setOpenModal} />
