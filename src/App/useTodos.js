@@ -2,9 +2,6 @@ import React from "react";
 
 import { useLocalStorage } from "./useLocalStorage";
 
-// creamos un contexto para poder compartir el state por todos los componentes de la app
-const TodoContext = React.createContext();
-
 /*
  * React.createComtext() retorna un objeto con dos propiedades
  * TodoContext.Provider: Nos permite envolver toda la aplicacion en el componente App.js
@@ -12,9 +9,8 @@ const TodoContext = React.createContext();
  *                       del estado compartido en cualquiera de los componentes
  */
 
-// Esta funcion nos permite compartir la informacion del state desde el Provider al Consumer
-// en esta funcion pasamos los valores, el state que vamos a compartir
-function TodoProvider(props) {
+// Convertimos el provider en un custom hook
+function useTodos() {
   /*
    * Provider envuelve a toda la app, es decir, va a contener a todos los componentes de la app
    * props.children: cualquier componente que llame a todoProvider
@@ -57,6 +53,7 @@ function TodoProvider(props) {
   const totalTodos = todos.length;
 
   let searchedTodos = [];
+
   if (!(searchValue.length >= 1)) {
     searchedTodos = todos;
   } else {
@@ -67,7 +64,7 @@ function TodoProvider(props) {
     });
   }
 
-  // funcion que completa un todo
+  // 1. funcion que completa un todo
   const completeTodo = (text) => {
     // encontramos la posicion de todo dentro de todos y que coincida con el input text
     const todoIndex = todos.findIndex((todo) => todo.text === text);
@@ -82,7 +79,7 @@ function TodoProvider(props) {
     saveTodos(newTodos);
   };
 
-  // funcion que agrega un todo
+  // 2. funcion que agrega un todo
   const addTodo = (text) => {
     // clonamos la lista de todos
     const newTodos = [...todos];
@@ -96,6 +93,7 @@ function TodoProvider(props) {
     saveTodos(newTodos);
   };
 
+  // 3.
   const deleteTodo = (text) => {
     const todoIndex = todos.findIndex((todo) => todo.text === text);
     const newTodos = [...todos];
@@ -130,27 +128,26 @@ function TodoProvider(props) {
   //  }, [totalTodos]);
   //  console.info("Luego de llamar a React.useEffect");
 
-  return (
-    <TodoContext.Provider
-      value={{
-        loading,
-        error,
-        totalTodos,
-        completedTodos,
-        searchValue,
-        setSearchValue,
-        searchedTodos,
-        addTodo,
-        completeTodo,
-        deleteTodo,
-        openModal,
-        setOpenModal,
-      }}
-    >
-      {props.children}
-    </TodoContext.Provider>
-  );
+  /**
+   * la funciones del provider las almacenamos en su propiedad value para que al envolver nuestra app en el TodoProvider
+   * cualquier componente de la app que necesita informacion del contexto podamos utilizar un componente consumer o el
+   * hook de react llamado useContext para acceder a dichas funciones.
+   */
+  return {
+    loading,
+    error,
+    totalTodos,
+    completedTodos,
+    searchValue,
+    setSearchValue,
+    searchedTodos,
+    addTodo,
+    completeTodo,
+    deleteTodo,
+    openModal,
+    setOpenModal,
+  };
 }
 
-// exportamos el contexto y el atajo todoProvider
-export { TodoContext, TodoProvider };
+// exportamos el custom Hook
+export { useTodos };

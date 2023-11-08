@@ -1,14 +1,10 @@
 import React from "react";
 
 import "./TodoForm.css";
-import { TodoContext } from "../TodoContext";
 
-function TodoForm() {
+function TodoForm({ addTodo, setOpenModal }) {
   // dentro del componente TodoForm manejamos un estado local que escucha el TextArea
   const [newTodoValue, setNewTodoValue] = React.useState("");
-
-  // llamamos a la funcion saveTodo del provider
-  const { addTodo, setOpenModal } = React.useContext(TodoContext);
 
   const onCancel = () => {
     setOpenModal(false);

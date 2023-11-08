@@ -1,11 +1,8 @@
 import React from "react";
 
-import { TodoContext } from "../TodoContext";
 import "./TodoSearch.css";
 
-function TodoSearch() {
-  const { searchValue, setSearchValue } = React.useContext(TodoContext);
-
+function TodoSearch({ searchValue, setSearchValue }) {
   // escuchamos los cambios hechos en el input search para llamar a la funcion setSearchValue y asi
   // actualizar el state searchValue
   const onHandleChange = (event) => {
