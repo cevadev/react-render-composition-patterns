@@ -2,7 +2,7 @@ import React from "react";
 
 import "./TodoSearch.css";
 
-function TodoSearch({ searchValue, setSearchValue }) {
+function TodoSearch({ searchValue, setSearchValue, loading }) {
   // escuchamos los cambios hechos en el input search para llamar a la funcion setSearchValue y asi
   // actualizar el state searchValue
   const onHandleChange = (event) => {
@@ -17,6 +17,7 @@ function TodoSearch({ searchValue, setSearchValue }) {
       placeholder="Ingrese una nueva tarea"
       value={searchValue}
       onChange={onHandleChange}
+      disabled={loading}
     />
   );
 }

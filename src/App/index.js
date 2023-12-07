@@ -9,6 +9,9 @@ import { CreateTodoButton } from "../CreateTodoButton/index.js";
 import { Modal } from "../Modal/index.js";
 import { TodoForm } from "../TodoForm/index.js";
 import { TodoHeader } from "../TodoHeader/index.js";
+import { TodosError } from "../TodosError/index.js";
+import { TodosLoading } from "../TodosLoading/index.js";
+import { EmptyTodos } from "../EmptyTodos/index.js";
 
 function App() {
   const {
@@ -27,7 +30,8 @@ function App() {
   } = useTodos();
   return (
     <React.Fragment>
-      <TodoHeader>
+      <TodoHeader loading={loading}>
+        {/** Todos los componentes dentro de TodoHeader reciben automaticamente la propiedad loading */}
         <TodoCounter totalTodos={totalTodos} completedTodos={completedTodos} />
         <TodoSearch searchValue={searchValue} setSearchValue={setSearchValue} />
       </TodoHeader>
@@ -35,17 +39,14 @@ function App() {
        * NOTA: Debemos notar que TodoList no es quien decide cual sera su contenido sino que es el componente AppUI
        *       el que decide lo que TodoList va a tener por dentro
        */}
-      <TodoList>
-        {error && (
-          <p>se ha producido un error inesperado en la carga de to-dos</p>
-        )}
-        {loading && (
-          <p className="TodoMsg">Estamos cargando la informacion de to-dos</p>
-        )}
-        {!loading && !searchedTodos.lenght && (
-          <p className="TodoMsg">puedes crear tu primer to-do</p>
-        )}
-        {searchedTodos.map((todo) => (
+      <TodoList
+        error={error}
+        loading={loading}
+        searchedTodos={searchedTodos}
+        onError={() => <TodosError />}
+        onLoading={() => <TodosLoading />}
+        onEmptyTodos={() => <EmptyTodos />}
+        render={(todo) => (
           <TodoItem
             key={todo.text}
             text={todo.text}
@@ -53,8 +54,9 @@ function App() {
             onComplete={() => completedTodo(todo.text)}
             onDelete={() => deleteTodo(todo.text)}
           />
-        ))}
-      </TodoList>
+        )}
+      />
+
       {/**doble negacion: que no exista, que no sea true (doblemente false es igual a true)*/}
       {!!openModal && (
         <Modal>
