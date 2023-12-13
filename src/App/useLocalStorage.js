@@ -40,7 +40,8 @@ function useLocalStorage(itemName, initialValue) {
         setError(error);
       }
     }, 2000);
-  });
+    // con el array vacio hacemos que el useEffect se ejecute solo una vez
+  }, []);
 
   // guardamos las actualizaciones que se nos envien en localstorage, como el state en React
   const saveItem = (newTodos) => {

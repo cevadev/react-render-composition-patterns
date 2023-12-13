@@ -12,13 +12,14 @@ import { TodoHeader } from "../TodoHeader/index.js";
 import { TodosError } from "../TodosError/index.js";
 import { TodosLoading } from "../TodosLoading/index.js";
 import { EmptyTodos } from "../EmptyTodos/index.js";
+import { ChageAlertWithStorageListener } from "../ChangeAlert/index.js";
 
 function App() {
   const {
     error,
     loading,
     searchedTodos,
-    completedTodo,
+    completeTodo,
     deleteTodo,
     openModal,
     setOpenModal,
@@ -51,7 +52,7 @@ function App() {
             key={todo.text}
             text={todo.text}
             completed={todo.completed}
-            onComplete={() => completedTodo(todo.text)}
+            onComplete={() => completeTodo(todo.text)}
             onDelete={() => deleteTodo(todo.text)}
           />
         )}
@@ -64,6 +65,7 @@ function App() {
         </Modal>
       )}
       <CreateTodoButton setOpenModal={setOpenModal} />
+      <ChageAlertWithStorageListener />
     </React.Fragment>
   );
 }
