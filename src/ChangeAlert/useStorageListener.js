@@ -20,6 +20,7 @@ function useStorageListener(sincronize) {
   };
 
   return {
+    // enviamos un objeto con dos propiedades
     show: storageChange,
     toggleShow,
   };

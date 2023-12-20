@@ -25,7 +25,7 @@ function TodoForm({ addTodo, setOpenModal }) {
 
   return (
     <form onSubmit={onSubmit}>
-      <label for="todo">Agrega un nuevo To-do a la lista</label>
+      <label htmlFor="todo">Agrega un nuevo To-do a la lista</label>
       <textarea
         name="todo"
         cols="30"

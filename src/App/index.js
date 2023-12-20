@@ -12,7 +12,7 @@ import { TodoHeader } from "../TodoHeader/index.js";
 import { TodosError } from "../TodosError/index.js";
 import { TodosLoading } from "../TodosLoading/index.js";
 import { EmptyTodos } from "../EmptyTodos/index.js";
-import { ChageAlertWithStorageListener } from "../ChangeAlert/index.js";
+import { ChangeAlert } from "../ChangeAlert/index.js";
 
 function App() {
   const {
@@ -28,6 +28,7 @@ function App() {
     searchValue,
     setSearchValue,
     addTodo,
+    sincronizeTodos,
   } = useTodos();
   return (
     <React.Fragment>
@@ -65,7 +66,11 @@ function App() {
         </Modal>
       )}
       <CreateTodoButton setOpenModal={setOpenModal} />
-      <ChageAlertWithStorageListener />
+      {/** exportamos el componente que tiene el High order componente de  withStoragelistener
+       * ChangeAlertWithStorageListener posee la propiedad sincronize con la que podemos mandar a sincronizar los TODOS con el
+       * localStorage
+       */}
+      <ChangeAlert sincronize={sincronizeTodos} />
     </React.Fragment>
   );
 }
